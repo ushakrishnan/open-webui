@@ -2222,6 +2222,15 @@ async def healthcheck_with_db():
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
+@app.get("/favicon.png")
+async def serve_favicon():
+    """Serve favicon.png from /static/favicon.png for backward compatibility"""
+    favicon_path = os.path.join(STATIC_DIR, "favicon.png")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path)
+    raise HTTPException(status_code=404, detail="Favicon not found")
+
+
 @app.get("/cache/{path:path}")
 async def serve_cache_file(
     path: str,
